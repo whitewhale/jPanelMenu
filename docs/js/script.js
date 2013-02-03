@@ -11,7 +11,7 @@ $(function() {
 	
 	jPanelMenu = $.jPanelMenu({
 		menu: 'header.main nav',
-		animated: false
+		animated: true
 	});
 	jPanelMenu.on();
 
