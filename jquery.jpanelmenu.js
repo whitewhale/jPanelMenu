@@ -120,17 +120,20 @@
 				var property = {};
 				if ( jP.settings.transformsSupported ) {
 					var direction = (open && jP.options.direction == 'right')?'-':'';
-					var translate = 'translateX(' + direction + position + ')';
+					var translate = 'translate3d(' + direction + position + ',0,0)';
 					var transform = 'transform';
 
 					if ( string ) {
-						property = jP.settings.cssPrefix + transform + ':' + translate + ';' + transform + ':' + translate + ';';
+						property = '';
+						if ( jP.settings.cssPrefix != '' ) { property = jP.settings.cssPrefix + transform + ':' + translate + ';' }
+						property += transform + ':' + translate + ';';
 					} else {
-						property[jP.settings.cssPrefix + transform] = translate;
+						if ( jP.settings.cssPrefix != '' ) {  property[jP.settings.cssPrefix + transform] = translate; }
 						property[transform] = translate;
 					}
 				} else {
 					if ( string ) {
+						property = '';
 						property = jP.options.direction + ': ' + position + ';';
 					} else {
 						property[jP.options.direction] = position;
@@ -177,7 +180,7 @@
 
 				if ( $('#jPanelMenu-style-master').length == 0 )
 				{
-					$('body').append('<style id="jPanelMenu-style-master">body{width:100%}.jPanelMenu,body{overflow-x:hidden}#jPanelMenu-menu{display:block;position:fixed;top:0;'+jP.options.direction+':0;height:100%;z-index:-1;overflow-x:hidden;overflow-y:scroll;-webkit-overflow-scrolling:touch}.jPanelMenu-panel{position:static;'+jP.options.direction+':0;top:0;z-index:2;width:100%;min-height:100%;background:' + bgColor + '}</style>');
+					$('body').append('<style id="jPanelMenu-style-master">body{width:100%}.jPanelMenu,body{overflow-x:hidden}#jPanelMenu-menu{display:block;position:fixed;top:0;'+jP.options.direction+':0;height:100%;z-index:-1;overflow-x:hidden;overflow-y:scroll;-webkit-overflow-scrolling:touch}.jPanelMenu-panel{position:static;'+jP.computePositionStyle(false,true)+'z-index:2;width:100%;min-height:100%;background:' + bgColor + '}</style>');
 				}
 			},
 
@@ -316,6 +319,7 @@
 			getCSSPrefix: function() {
 				var prefix = jP.getVendorPrefix();
 				if ( prefix != '' ) { return '-' + prefix.toLowerCase() + '-'; }
+				return '';
 			},
 
 			openMenu: function(animated) {
@@ -341,12 +345,10 @@
 					if ( animationChecks.none ) jP.disableTransitions();
 					if ( animationChecks.transitions ) jP.enableTransitions(jP.options.openDuration, jP.options.openEasing);
 
-					var newPanelStyle = {};
-					newPanelStyle[jP.options.direction] = jP.options.openPosition;
+					var newPanelStyle = jP.computePositionStyle(true);
 					jP.setPanelStyle(newPanelStyle);
 
-					if ( jP.settings.shiftFixedChildren )
-					{
+					if ( jP.settings.shiftFixedChildren ) {
 						$(jP.fixedChildren).each(function(){
 							var id = $(this).prop("tagName").toLowerCase() + ' ' + $(this).attr('class'),
 								selector = id.replace(' ','.'),
@@ -364,8 +366,7 @@
 
 					jP.timeouts.afterOpen = setTimeout(function(){
 						jP.disableTransitions();
-						if ( jP.settings.shiftFixedChildren )
-						{
+						if ( jP.settings.shiftFixedChildren ) {
 							$(jP.fixedChildren).each(function(){
 								var id = $(this).prop("tagName").toLowerCase() + ' ' + $(this).attr('class'),
 									id = id.replace(' ','-')
@@ -391,8 +392,7 @@
 						jP.initiateContentClickListeners();
 					});
 
-					if ( jP.settings.shiftFixedChildren )
-					{
+					if ( jP.settings.shiftFixedChildren ) {
 						$(jP.fixedChildren).each(function(){
 							var childrenAnimationOptions = {};
 							childrenAnimationOptions[jP.options.direction] = jP.options.openPosition;
@@ -421,12 +421,10 @@
 					if ( animationChecks.none ) jP.disableTransitions();
 					if ( animationChecks.transitions ) jP.enableTransitions(jP.options.closeDuration, jP.options.closeEasing);
 
-					var newPanelStyle = {};
-					newPanelStyle[jP.options.direction] = 0 + jP.settings.positionUnits;
+					var newPanelStyle = jP.computePositionStyle();
 					jP.setPanelStyle(newPanelStyle);
 
-					if ( jP.settings.shiftFixedChildren )
-					{
+					if ( jP.settings.shiftFixedChildren ) {
 						$(jP.fixedChildren).each(function(){
 							var id = $(this).prop("tagName").toLowerCase() + ' ' + $(this).attr('class'),
 								selector = id.replace(' ','.'),
@@ -446,8 +444,7 @@
 						jP.setPanelStyle({ position: jP.settings.panelPosition });
 
 						jP.disableTransitions();
-						if ( jP.settings.shiftFixedChildren )
-						{
+						if ( jP.settings.shiftFixedChildren ) {
 							$(jP.fixedChildren).each(function(){
 								var id = $(this).prop("tagName").toLowerCase() + ' ' + $(this).attr('class'),
 									id = id.replace(' ','-')
@@ -477,8 +474,7 @@
 						jP.destroyContentClickListeners();
 					});
 
-					if ( jP.settings.shiftFixedChildren )
-					{
+					if ( jP.settings.shiftFixedChildren ) {
 						$(jP.fixedChildren).each(function(){
 							var childrenAnimationOptions = {};
 							childrenAnimationOptions[jP.options.direction] = 0 + jP.settings.positionUnits;
@@ -527,8 +523,7 @@
 					if ( prevent ) { return true; }
 
 					for ( mapping in jP.options.keyboardShortcuts ) {
-						if ( e.which == jP.options.keyboardShortcuts[mapping].code )
-						{
+						if ( e.which == jP.options.keyboardShortcuts[mapping].code ) {
 							var key = jP.options.keyboardShortcuts[mapping];
 
 							if ( key.open && key.close ) { jP.triggerMenu(jP.options.animated); }
@@ -560,6 +555,8 @@
 			init: function() {
 				jP.options.beforeOn();
 
+				jP.setPositionUnits();
+				jP.setCSSPrefix();
 				jP.initiateClickListeners();
 				if ( Object.prototype.toString.call(jP.options.keyboardShortcuts) === '[object Array]' ) { jP.initiateKeyboardListeners(); }
 
@@ -571,9 +568,7 @@
 					width: jP.options.openPosition
 				});
 
-				jP.checkFixedChildren();
-				jP.setPositionUnits();
-				jP.setCSSPrefix();
+				if ( !jP.settings.transformsSupported) { jP.checkFixedChildren(); }
 
 				jP.closeMenu(false);
 

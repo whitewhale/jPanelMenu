@@ -2,7 +2,8 @@
 // @codekit-prepend lib/respond.js
 // @codekit-prepend lib/highlight.min.js
 // @codekit-prepend lib/jquery-1.9.0.js
-// @codekit-prepend lib/jquery.jpanelmenu.min.js
+// codekit-prepend lib/jquery.jpanelmenu.min.js
+// @codekit-prepend ../../jquery.jpanelmenu.js
 // @codekit-prepend lib/plugins.js
 
 var jPanelMenu = {};
