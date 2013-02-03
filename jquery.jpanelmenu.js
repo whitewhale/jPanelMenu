@@ -72,6 +72,13 @@
 										'OTransition' in document.body.style ||
 										'Transition' in document.body.style
 				,
+				transformsSupported:	'WebkitTransform' in document.body.style ||
+										'MozTransform' in document.body.style ||
+										'msTransform' in document.body.style ||
+										'OTransform' in document.body.style ||
+										'Transform' in document.body.style
+				,
+				cssPrefix: '',
 				shiftFixedChildren: false,
 				panelPosition: 'relative',
 				positionUnits: 'px'
@@ -106,6 +113,34 @@
 				}
 
 				if ( !foundUnit ) { jP.options.openPosition = parseInt(jP.options.openPosition) + jP.settings.positionUnits }
+			},
+
+			computePositionStyle: function(open, string) {
+				var position = (open)?jP.options.openPosition:'0' + jP.settings.positionUnits;
+				var property = {};
+				if ( jP.settings.transformsSupported ) {
+					var direction = (open && jP.options.direction == 'right')?'-':'';
+					var translate = 'translateX(' + direction + position + ')';
+					var transform = 'transform';
+
+					if ( string ) {
+						property = jP.settings.cssPrefix + transform + ':' + translate + ';' + transform + ':' + translate + ';';
+					} else {
+						property[jP.settings.cssPrefix + transform] = translate;
+						property[transform] = translate;
+					}
+				} else {
+					if ( string ) {
+						property = jP.options.direction + ': ' + position + ';';
+					} else {
+						property[jP.options.direction] = position;
+					}
+				}
+				return property;
+			},
+
+			setCSSPrefix: function() {
+				jP.settings.cssPrefix = jP.getCSSPrefix();
 			},
 
 			checkFixedChildren: function() {
@@ -190,7 +225,7 @@
 				var formattedDuration = duration/1000;
 				var formattedEasing = jP.getCSSEasingFunction(easing);
 				jP.disableTransitions();
-				$('body').append('<style id="jPanelMenu-style-transitions">.jPanelMenu-panel{-webkit-transition: all ' + formattedDuration + 's ' + formattedEasing + '; -moz-transition: all ' + formattedDuration + 's ' + formattedEasing + '; -o-transition: all ' + formattedDuration + 's ' + formattedEasing + '; transition: all ' + formattedDuration + 's ' + formattedEasing + ';}</style>');
+				$('body').append('<style id="jPanelMenu-style-transitions">.jPanelMenu-panel{' + jP.settings.cssPrefix + 'transition: all ' + formattedDuration + 's ' + formattedEasing + '; transition: all ' + formattedDuration + 's ' + formattedEasing + ';}</style>');
 			},
 
 			disableTransitions: function() {
@@ -201,7 +236,7 @@
 				var formattedDuration = duration/1000;
 				var formattedEasing = jP.getCSSEasingFunction(easing);
 				jP.disableFixedTransitions(id);
-				$('body').append('<style id="jPanelMenu-style-fixed-' + id + '">' + selector + '{-webkit-transition: all ' + formattedDuration + 's ' + formattedEasing + '; -moz-transition: all ' + formattedDuration + 's ' + formattedEasing + '; -o-transition: all ' + formattedDuration + 's ' + formattedEasing + '; transition: all ' + formattedDuration + 's ' + formattedEasing + ';}</style>');
+				$('body').append('<style id="jPanelMenu-style-fixed-' + id + '">' + selector + '{' + jP.settings.cssPrefix + 'transition: all ' + formattedDuration + 's ' + formattedEasing + '; transition: all ' + formattedDuration + 's ' + formattedEasing + ';}</style>');
 			},
 
 			disableFixedTransitions: function(id) {
@@ -248,6 +283,39 @@
 						return 'swing';
 						break;
 				}
+			},
+
+			getVendorPrefix: function() {
+				// Thanks to Lea Verou for this beautiful function. (http://lea.verou.me/2009/02/find-the-vendor-prefix-of-the-current-browser)
+				if('result' in arguments.callee) return arguments.callee.result;
+
+				var regex = /^(Moz|Webkit|Khtml|O|ms|Icab)(?=[A-Z])/;
+
+				var someScript = document.getElementsByTagName('script')[0];
+
+				for(var prop in someScript.style)
+				{
+					if(regex.test(prop))
+					{
+						// test is faster than match, so it's better to perform
+						// that on the lot and match only when necessary
+						return arguments.callee.result = prop.match(regex)[0];
+					}
+
+				}
+
+				// Nothing found so far? Webkit does not enumerate over the CSS properties of the style object.
+				// However (prop in style) returns the correct value, so we'll have to test for
+				// the precence of a specific property
+				if('WebkitOpacity' in someScript.style) return arguments.callee.result = 'Webkit';
+				if('KhtmlOpacity' in someScript.style) return arguments.callee.result = 'Khtml';
+
+				return arguments.callee.result = '';
+			},
+
+			getCSSPrefix: function() {
+				var prefix = jP.getVendorPrefix();
+				if ( prefix != '' ) { return '-' + prefix.toLowerCase() + '-'; }
 			},
 
 			openMenu: function(animated) {
@@ -505,6 +573,7 @@
 
 				jP.checkFixedChildren();
 				jP.setPositionUnits();
+				jP.setCSSPrefix();
 
 				jP.closeMenu(false);
 
