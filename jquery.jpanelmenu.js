@@ -568,7 +568,7 @@
 					width: jP.options.openPosition
 				});
 
-				if ( !jP.settings.transformsSupported) { jP.checkFixedChildren(); }
+				if ( !jP.settings.transformsSupported ) { jP.checkFixedChildren(); }
 
 				jP.closeMenu(false);
 
