@@ -499,7 +499,7 @@ And please, [let me know](http://acolangelo.com/contact) when you launch somethi
 
 #<a href="#changelog" id="#changelog">Changelog</a>
 
-###<a href="#changelog-1.3.0" id="changelog-1.3.0">1.3.0</a>
+###<a href="#changelog-1.4.0" id="changelog-1.4.0">1.4.0</a>
 
 May 14th, 2013
 
