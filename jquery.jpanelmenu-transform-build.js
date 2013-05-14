@@ -558,6 +558,7 @@
 			},
 
 			init: function() {
+				if ( $('html').hasClass('jPanelMenu') ) return jP;
 				jP.options.beforeOn();
 
 				jP.setPositionUnits();
