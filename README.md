@@ -1,14 +1,12 @@
 #<a id="docs" href="#docs">jPanelMenu</a>
 
-###Version 1.3.0
+###Version 1.4.0
 
 jPanelMenu is a [jQuery](http://jquery.com) plugin that creates a paneled-style menu (like the type seen in the mobile versions of [Facebook](http://m.facebook.com) and [Google](http://google.com), as well as in many native iPhone applications).
 
 Check out the [demo (and documentation) site](http://jpanelmenu.com) to see it in action.
 
 Check out the [changelog](#changelog) to see what&rsquo;s new.
-
-
 
 #<a id="usage" href="#usage">How Do I Use This Thing?</a>
 
@@ -500,6 +498,14 @@ And please, [let me know](http://acolangelo.com/contact) when you launch somethi
 
 
 #<a href="#changelog" id="#changelog">Changelog</a>
+
+###<a href="#changelog-1.3.0" id="changelog-1.3.0">1.3.0</a>
+
+May 14th, 2013
+
+- BIG FEATURE : Multilayer panel.
+- Added new option: [`alwaysShowMainMenuFirst`](#options-alwaysShowMainMenuFirst)
+- More to come.
 
 ###<a href="#changelog-1.3.0" id="changelog-1.3.0">1.3.0</a>
 

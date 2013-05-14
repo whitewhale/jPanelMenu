@@ -1,7 +1,9 @@
 /**
   *
-  * jPanelMenu 1.3.0 CSS Transform Build (http://jpanelmenu.com)
+  * jPanelMenu 1.4.0 CSS Transform Build (http://jpanelmenu.com)
   * By Anthony Colangelo (http://acolangelo.com)
+  *
+  * Multilayer-panel by Allan Stepps (@AllanStepps)
   *
 * */
 
@@ -14,7 +16,7 @@
 				menu: '#menu',
 				trigger: '.menu-trigger',
 				excludedPanelContent: 'style, script',
-				alwaysShowFirstMenu: false,
+				alwaysShowMainMenuFirst: false,
 
 				direction: 'left',
 				openPosition: '250px',
@@ -215,7 +217,7 @@
 				jP.setMenuStyle({
 					'z-index': '1'
 				});
-				!jP.options.alwaysShowFirstMenu && $('.jPanel__slidesPanels').css({marginLeft: 0});
+				!jP.options.alwaysShowMainMenuFirst && $('.jPanel__slidesPanels').css({marginLeft: 0});
 			},
 
 			hideMenu: function() {
@@ -602,7 +604,7 @@
 
 				var nbPanels = $('.jPanel__slide_menu').length;
 			 	$('.jPanel__slidesPanels').css({width: nbPanels * 100 + '%'});
-			 	$('.jPanel__slide_menu').css({width: jP.options.openPosition, float: 'left'})
+			 	$('.jPanel__slide_menu').css({width: jP.options.openPosition, 'float': 'left'})
 
 			},
 
